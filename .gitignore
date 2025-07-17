@@ -1,0 +1,15 @@
+# Node modules
+**/node_modules
+
+# Logs
+*.log
+
+# Env
+**/.env
+
+# Vite / React build
+frontend/dist
+
+# Sequelize migrations builds (se aplicável)
+backend/build
+
