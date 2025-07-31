@@ -1,8 +1,8 @@
-const {Listing} = require("../models");
+const {Listing, Booking} = require("../models");
 const {Op} = require('sequelize')
 
 async function createListing(req, res) {
-  const allowedFields = ['title', 'description', 'location', 'pricePerNight', 'maxGuests', 'maxGuests', 'imageUrls', 'hostId']
+  const allowedFields = ['title', 'description', 'location', 'pricePerNight', 'maxGuests', 'imageUrls', 'hostId']
   const listingData = {}
   const {listingParams} = req.body
   allowedFields.forEach(field => {
@@ -28,12 +28,63 @@ async function deleteListing(req, res) {
 
 async function listListing(req, res) {
   const {filterParams} = req.body
-  const listings = await Listing.findAll()
+  const filter = {}
+  const allowedFields = ['hostId', 'pricePerNight', 'guests', 'id']
+
+  allowedFields.forEach(field => {
+    if (filterParams[field] !== undefined) {
+      if(field === 'guests') {
+        filter.maxGuests = {
+          [Op.gte]: filterParams[field]
+        }
+      } else if(field === 'pricePerNight') {
+        filter.pricePerNight = {
+          [Op.lte]: filterParams[field]
+        }
+      } else {
+        filter[field] = filterParams[field]
+      }
+    }
+    
+  })
+  const listings = await Listing.findAll({where: filter})
   res.send(listings)
 }
 
 async function updateListing(req, res) {
-  allowedFields = ['title', 'description', 'location', 'pricePerNight', 'maxGuests', 'imageUrls']
+  allowedFields = ['title', 'description', 'location', 'pricePerNight', 'maxGuests', 'imageUrls', 'listingType']
+  const {listings} = req.body
+
+  if (!Array.isArray(listings)) {
+    res.status(400).json({msg: "listings deve ser um Array"})
+  }
+
+  const results = []
+
+  for (const listing of listings) {
+    const {listingId, fieldsToUpdate} = listing
+
+    if(!listingId) {
+      results.push({success: false, message: "ID não encontrado", listing})
+    }
+
+    try {
+      const [updated] = await Listing.update(fieldsToUpdate, {where: {
+        id: listingId
+      }})
+      if(updated) {
+        results.push({success: true, listingId})
+      } else {
+        results.push({success: false, message: "Listing não encontrada"})
+
+      }
+    } catch (error) {
+      results.push({success: false, listingId, error: error.message})
+      
+    }
+
+  }
+  res.json(results)  
 }
 
 module.exports = {

@@ -2,7 +2,7 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 
 async function createUser(req, res) {
-  const user_params = req.body.user;
+  const {user_params} = req.body;
   const saltRounds = 10;
 
   try {

@@ -20,6 +20,12 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       allowNull: false,
     },
+    listingType: {
+      type: DataTypes.ENUM,
+      values: ['Quarto', 'Casa', 'Apartamento', 'Loft', 'Chalé', 'Cabana'],
+      defaultValue: 'Quarto',
+      allowNull: false
+    }
 
   })
 

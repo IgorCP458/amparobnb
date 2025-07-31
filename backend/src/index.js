@@ -5,6 +5,12 @@ const PORT = process.env.PORT || 7777
 
 const models = require('./models')
 
+const cors = require('cors')
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  credentials: true
+}));
+
 // Middleware para permitir JSON nas requisições
 app.use(express.json())
 
@@ -14,6 +20,12 @@ app.use('/api/users', usersRoutes)
 
 const listingsRoutes = require('./routes/listing.routes')
 app.use('/api/listings', listingsRoutes)
+
+const bookingsRoutes = require('./routes/booking.routes')
+app.use('/api/bookings', bookingsRoutes)
+
+const reviewsRoutes = require('./routes/review.routes')
+app.use('/api/reviews', reviewsRoutes)
 
 // Exemplo simples de rota
 app.get('/', (req, res) => {
