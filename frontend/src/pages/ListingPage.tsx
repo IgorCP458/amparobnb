@@ -1,7 +1,7 @@
 import BestCertified from "@/components/ListingPageComponents/BestCertified"
 import ListingPageImages from "@/components/ListingPageComponents/ListingPageImages"
 import ReservationCard from "@/components/ListingPageComponents/ReservationCard"
-import { getListings } from "@/services/listings"
+import { ListingService } from "@/services/listings"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
@@ -29,7 +29,7 @@ function ListingPage () {
     
     const fetchListing = async () => {
       try {
-        const fetchListing = await getListings(body)
+        const fetchListing = await ListingService.getAll(body)
         setListing(fetchListing[0])
 
       } catch (error) {

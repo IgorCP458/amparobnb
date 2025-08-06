@@ -1,5 +1,5 @@
 import ListingCard from "@/components/HomePageComponents/ListingCard"
-import { getListings } from "@/services/listings"
+import { ListingService } from "@/services/listings"
 import { useEffect, useState } from "react"
 
 function HomePage() {
@@ -15,7 +15,7 @@ function HomePage() {
         }
       }
       try {
-        const data = await getListings(body)
+        const data = await ListingService.getAll(body)
         setListings(data)
       } catch (error) {
         console.log(error)

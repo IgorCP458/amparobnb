@@ -2,6 +2,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import ListingPage from './pages/ListingPage'
 import Header from './components/Header'
+import LoginPage from './pages/LoginPage'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path='/' element={<HomePage />}></Route>
         <Route path='/listing/:id' element={<ListingPage/>}></Route>
+        <Route path='/login' element={<LoginPage/>}></Route>
       </Routes>
     </Router>
     </div>
