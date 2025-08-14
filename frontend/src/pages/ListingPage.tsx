@@ -21,22 +21,12 @@ function ListingPage () {
   const [listing, setListing] = useState<ListingProps | null >(null)
 
   useEffect(() => {
-    const body = {
-      "filterParams": {
-        "id": id
-      }
-    }
     
-    const fetchListing = async () => {
-      try {
-        const fetchListing = await ListingService.getAll(body)
-        setListing(fetchListing[0])
-
-      } catch (error) {
-        console.log(error)
-      }
+    const getListing = async () => {
+      const response = await ListingService.getById(id)
+      setListing(response[0])
     }
-    fetchListing()
+    getListing()
   }, [])
 
   if(!listing) {

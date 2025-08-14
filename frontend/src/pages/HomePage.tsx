@@ -6,22 +6,17 @@ function HomePage() {
   const [listings, setListings] = useState<any[]>([])
 
   useEffect(() => {
-    const fetchListings = async () => {
-      const body = {
-        "filterParams": {
-        "guests": 3,
-        "startDate": "2025-08-01",
-        "endDate": "2025-08-06"
-        }
-      }
-      try {
-        const data = await ListingService.getAll(body)
-        setListings(data)
-      } catch (error) {
-        console.log(error)
+    const body = {
+      filterParams: {
+
       }
     }
-    fetchListings()
+    const getListings = async () => {
+      const listings = await ListingService.getAll(body)  
+      setListings(listings)
+    }
+    getListings()
+
   }, [])
 
   return(
@@ -49,3 +44,5 @@ function HomePage() {
 }
 
 export default HomePage
+
+

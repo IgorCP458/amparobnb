@@ -1,12 +1,18 @@
 import api from './api';
 
 export const ListingService = {
-  getAll: (filterParams: any) => {
-    api.post('/listings', {
-      filterParams
-    })
+  getAll: async (filterParams: any) => {
+    const response = await api.post('/listings/list', filterParams)
+    return response.data
+
   },
-  getById: () => {
+  getById: async (id: string | undefined) => {
+    const response = await api.post('/listings/list', {
+      filterParams: {
+        id: id
+      }
+    })
+    return response.data
 
   },
   create: () => {

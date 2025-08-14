@@ -28,8 +28,8 @@ function getDays (dateRange: GetDaysProps) {
 
 export default function ReservationCard({maxGuests, pricePerNight}: ReservationCardProps) {
   const [dateRange, setDateRange] = useState<DateRange>({
-    from: new Date,
-    to: addDays(new Date, 2)
+    from: addDays(new Date, 3),
+    to: addDays(new Date, 5)
   })
 
   return (
@@ -61,6 +61,11 @@ export default function ReservationCard({maxGuests, pricePerNight}: ReservationC
                   defaultMonth={dateRange?.from}
                   selected={dateRange}
                   onSelect={setDateRange}
+                  disabled={{
+                    before: addDays(new Date, 2)
+                  }}
+                  min={2}
+                  max={7}
                   numberOfMonths={2}
                   className="rounded-lg border shadow-sm"
                 />

@@ -11,20 +11,23 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from 'react'
+import { UserServices } from '@/services/users'
 
 const loginSchema = z.object({
   email: z.email('Email inválido'),
   password: z
     .string()
-    .min(8, "A senha deve ter pelo menos 8 caracteres")
+    .min(5, "A senha deve ter pelo menos 8 caracteres")
     .max(40, "A senha deve ter no máximo 40 caracteres")
 })
 
 
 
 export default function LoginCard() {
+  
+  const navigate = useNavigate() 
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -37,7 +40,20 @@ export default function LoginCard() {
         console.log(result.error)
 
       } else {
-        
+        const checkLogin = async () => {
+          const body = {
+            loginParams: {
+              email,
+              password
+            }
+          }
+          const response = await UserServices.checkLogin(body)
+          if(response.isLogged) {
+            console.log(response)
+            return navigate('/')
+          }
+        }
+        checkLogin()
       }
     } catch (error) {
       
