@@ -12,11 +12,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
-import { useState } from 'react'
-import { UserServices } from '@/services/users'
+import { useAuth } from '@/services/AuthContext'
 
 const loginSchema = z.object({
-  email: z.email('Email inválido'),
+  email: z
+    .email('Email inválido'),
   password: z
     .string()
     .min(5, "A senha deve ter pelo menos 8 caracteres")
@@ -26,6 +26,8 @@ const loginSchema = z.object({
 
 
 export default function LoginCard() {
+
+  const {login, user} = useAuth()
   
   const navigate = useNavigate() 
 
@@ -41,15 +43,8 @@ export default function LoginCard() {
 
       } else {
         const checkLogin = async () => {
-          const body = {
-            loginParams: {
-              email,
-              password
-            }
-          }
-          const response = await UserServices.checkLogin(body)
+          const response = await login(email, password)
           if(response.isLogged) {
-            console.log(response)
             return navigate('/')
           }
         }

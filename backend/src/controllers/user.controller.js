@@ -3,14 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const checkToken = require("../middlewares/authCheck");
 
-// helpers
-function generateAccessToken(payload) {
-  return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
-}
-function generateRefreshToken(payload) {
-  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-}
-
 
 async function createUser(req, res) {
   const {user_params} = req.body;
@@ -43,10 +35,8 @@ async function login(req, res) {
       const match = await bcrypt.compare(loginParams.password, user.password)
       if(match) {
         console.log(`Usuário logado: ${user.name} (${user.email})`)
-        const userJwt = {
-          id: user.id,
-          email: user.email
-        }
+        const {email, id, name, avatar} = user
+        const userJwt = {email, id, name, avatar}
         
         const token = jwt.sign(userJwt, process.env.JWT_SECRET, {
           expiresIn: "1h",
@@ -57,7 +47,7 @@ async function login(req, res) {
           httpOnly: true, // não acessível via JS no browser
           secure: process.env.NODE_ENV === "production", // HTTPS
           sameSite: "strict", // prevenção contra CSRF básico
-          maxAge: 15 * 60 * 1000, // 1 hora
+          maxAge: 60 * 60 * 1000, // 1 hora
         }).json({ isLogged: true });
       } else {
         res.json({"msg": "Senha incorreta"})
@@ -94,7 +84,27 @@ async function userList(req, res) {
 }
 
 async function authCheck(req, res) {
-  res.status(401).json({msg: "oi"})
+    const token = req.cookies.token
+    
+    if(!token) {
+      res.status(401).json({ user: null })
+    }
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const {id, email, name, avatar} = decoded; // salva info do user para a próxima rota
+      return res.status(200).json({user: {id, email, name, avatar}})
+    } catch (error) {
+      return res.status(401).json({ user: null });
+    }
+}
+
+async function logout(req, res) {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // true em produção
+    sameSite: "strict",
+  });
+  return res.json({ message: "Logout realizado com sucesso" });
 }
 
 
@@ -102,6 +112,7 @@ async function authCheck(req, res) {
 module.exports = {
   createUser,
   login,
+  logout,
   deleteUser,
   userList,
   authCheck

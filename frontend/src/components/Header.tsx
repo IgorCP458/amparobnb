@@ -1,12 +1,19 @@
 // src/components/Header.tsx
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { useAuth } from "@/services/AuthContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function Header() {
-  const {user} = useAuth()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate()
+
+  async function handleLogout() {
+    logout()
+    navigate('/')
+  }
 
   if(user) {
     return (
@@ -23,6 +30,31 @@ export default function Header() {
           <Link to="/" className="hover:text-red-400">Explorar</Link>
           <Link to="/about" className="hover:text-red-400">Sobre</Link>
         </nav>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button className="rounded-full bg-accent text-white cursor-pointer justify-between px-4 hover:bg-neutral-900 min-w-24">
+              <Avatar className="h-6 w-6">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              {user.name}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="grid grid-rows-2 space-y-2 rounded-xl w-[150px]">
+            <Link to='/account' className="mx-auto">
+              <Button variant='outline' className="w-[100px] mx-auto cursor-pointer">
+                Minha conta
+              </Button>
+            </Link>
+            <Link to='/' className="mx-auto">
+              <Button variant='outline' className="w-[100px] mx-auto cursor-pointer" onClick={handleLogout}>
+                Sair
+              </Button>
+            </Link>
+          </PopoverContent>
+        </Popover>
+
       </div>
     </header>
     )
@@ -49,13 +81,16 @@ export default function Header() {
             <Button className="rounded-full bg-gradient-to-r from-pink-500 to-red-500 text-white cursor-pointer">Entrar</Button>
           </PopoverTrigger>
           <PopoverContent className="grid grid-rows-2 space-y-2 rounded-xl w-[150px]">
-            <Button variant='outline' className="w-[100px] mx-auto">
-              <Link to='/login'>Login</Link>
-            </Button>
-            <Button variant='outline' className="w-[100px] mx-auto">
-              <Link to='/register'>Registre-se</Link>
-
-            </Button>
+            <Link to='/login' className="mx-auto">
+              <Button variant='outline' className="w-[100px] mx-auto">
+                Login
+              </Button>
+            </Link>
+            <Link to='/register' className="mx-auto">
+              <Button variant='outline' className="w-[100px] mx-auto">
+                Registre-se
+              </Button>
+            </Link>
           </PopoverContent>
         </Popover>
       </div>

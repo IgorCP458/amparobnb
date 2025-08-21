@@ -4,6 +4,7 @@ const UserController = require('../controllers/user.controller')
 
 router.post('/signup', UserController.createUser)
 router.post('/signin', UserController.login)
+router.post('/logout', UserController.logout)
 router.post('/delete', UserController.deleteUser)
 router.post('/list', UserController.userList)
 router.post('/auth/me', UserController.authCheck)

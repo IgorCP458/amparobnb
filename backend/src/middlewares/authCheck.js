@@ -13,7 +13,7 @@ function checkToken(req, res, next) {
       status: 200
     })
   } catch (err) {
-    return res.status(401).json({ error: "Token inválido ou expirado", err });
+    return res.status(401).json({ error: "Token inválido ou expiradooo", token, secret: process.env.JWT_SECRET });
   }
 }
 
