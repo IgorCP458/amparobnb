@@ -4,6 +4,8 @@ import ListingPage from './pages/ListingPage'
 import Header from './components/Header'
 import LoginPage from './pages/LoginPage'
 import { AuthProvider } from './services/AuthContext'
+import AboutPage from './pages/AboutPage'
+import AccountPage from './pages/AccountPage'
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
           <Route path='/' element={<HomePage />}></Route>
           <Route path='/listing/:id' element={<ListingPage/>}></Route>
           <Route path='/login' element={<LoginPage/>}></Route>
+          <Route path='/about' element={<AboutPage/>}></Route>
+          <Route path='/account' element={<AccountPage/>}></Route>
         </Routes>
       </Router>
     </AuthProvider>  

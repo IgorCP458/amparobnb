@@ -18,6 +18,14 @@ module.exports = (sequelize) => {
       type: DataTypes.UUID,
       allowNull: false,
     },
+    guestName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    listingName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
 
   })
 

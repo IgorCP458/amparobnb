@@ -27,7 +27,6 @@ export default function Header() {
         {/* Menu simples */}
         <nav className="hidden md:flex space-x-6">
           <Link to="/" className="hover:text-red-400">Início</Link>
-          <Link to="/" className="hover:text-red-400">Explorar</Link>
           <Link to="/about" className="hover:text-red-400">Sobre</Link>
         </nav>
 

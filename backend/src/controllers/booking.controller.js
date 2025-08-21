@@ -3,7 +3,7 @@ const { Booking } = require("../models");
 const { Listing } = require("../models");
 
 async function createBooking(req, res) {
-  const { listingId, userId, startDate, endDate, totalPrice } = req.body;
+  const { listingId, listingName, userId, guestName, startDate, endDate, totalPrice } = req.body;
 
   if (!startDate || !endDate || new Date(startDate) >= new Date(endDate)) {
     return res.status(400).json({ message: "Datas inválidas: a data de início deve ser anterior à data de fim." });
@@ -38,7 +38,10 @@ async function createBooking(req, res) {
       totalPrice,
       status: 'pending',
       userId,
-      listingId
+      listingId,
+      listingName,
+      guestName
+
     })
     res.json(booking)
   } catch (error) {
