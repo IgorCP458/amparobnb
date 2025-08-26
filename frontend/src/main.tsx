@@ -6,7 +6,5 @@ import App from './App.tsx'
 document.documentElement.classList.add('dark'); // Ativa modo dark fixo (temporário)
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-      <App />
-  </StrictMode>,
+  <App />
 )

@@ -46,7 +46,7 @@ async function listListing(req, res) {
         if(filterParams[field] !== null) {
           if(typeof filterParams[field] === 'string') {
             idList.push(filterParams[field])
-          } else if (typeof filterParams[field] === 'array') {
+          } else if (typeof filterParams[field] === 'object') {
             idList = filterParams[field]
           }
         }

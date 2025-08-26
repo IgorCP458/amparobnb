@@ -1,5 +1,6 @@
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import StatusButton from "./StatusButton"
 
 function BookingCard ({booking}: any) {
   let status = {
@@ -17,7 +18,7 @@ function BookingCard ({booking}: any) {
           <p><strong>{booking.listingName}</strong></p>
           <p><strong>Período:</strong> {format(booking.startDate,'dd/MM/yyyy',{locale: ptBR})} - {format(booking.endDate,`dd/MM/yyyy`,{locale: ptBR})}</p>
           <p><strong></strong>R$ { booking.totalPrice }</p>
-          <p className={status.class}>{status.text}</p>
+          <StatusButton booking={booking}/>
         </li>
       </div>
       
