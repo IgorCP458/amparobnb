@@ -30,6 +30,7 @@ async function listListing(req, res) {
   const {filterParams} = req.body
   const filter = {}
   const allowedFields = ['hostId', 'pricePerNight', 'guests', 'id']
+  let idList = []
 
   allowedFields.forEach(field => {
     if (filterParams[field] !== undefined) {
@@ -40,6 +41,17 @@ async function listListing(req, res) {
       } else if(field === 'pricePerNight') {
         filter.pricePerNight = {
           [Op.lte]: filterParams[field]
+        }
+      } else if(field === 'id') {
+        if(filterParams[field] !== null) {
+          if(typeof filterParams[field] === 'string') {
+            idList.push(filterParams[field])
+          } else if (typeof filterParams[field] === 'array') {
+            idList = filterParams[field]
+          }
+        }
+        filter.id = {
+          [Op.in]: idList
         }
       } else {
         filter[field] = filterParams[field]

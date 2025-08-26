@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import {format} from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+
 
  // ajuste o path
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/services/AuthContext";
 import { Separator } from "@radix-ui/react-select";
 import api from "@/services/api";
+import BookingCard from "@/components/AccountPage/BookingCard";
+import MyListingCard from "@/components/AccountPage/MyListingCard";
 
 interface Reservation {
   id: string;
@@ -26,20 +27,39 @@ export default function AccountPage() {
   const { user } = useAuth();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
+  const [reservationListings, setReservationListings] = useState<Listing[]>([])
 
   useEffect(() => {
     if (user) {
       // 🔹 Busca reservas do usuário
       (async () => {
         const responseListings = await api.post('/listings/list', JSON.stringify({filterParams: {hostId: user.id}}))
-        const responseReservations = await api.post('/bookings/list', JSON.stringify({filterParams: {hostId: user.id}}))
-        setReservations(responseReservations.data)
+        const responseReservations = await api.post('/bookings/list', JSON.stringify({filterParams: {userId: user.id}}))
+        const reservationListingIds = responseReservations.data.map((reservation: any) => reservation.listingId)
+        const reservationListingsResponse = await api.post('/listings/list', JSON.stringify({filterParams: {id: reservationListingIds}}))
+
+        const reserves = responseReservations.data.map((reservation: any) => {
+          for (var listing of reservationListingsResponse.data) {
+            if(listing.id === reservation.listingId) {
+              return({
+                ...reservation,
+                listing
+              })
+            }
+          }
+          
+        })
+        
+        setReservationListings(reservationListingsResponse.data)
+        setReservations(reserves)
         setListings(responseListings.data)
       }) ()
       // 🔹 Busca listings do usuário
 
     }
   }, [user]);
+
+
 
   if (!user) {
     return (
@@ -73,12 +93,7 @@ export default function AccountPage() {
           {reservations.length > 0 ? (
             <ul className="space-y-3">
               {reservations.map((r) => (
-                <li key={r.id} className="border p-3 rounded-lg shadow-sm">
-                  <p><strong>Listing:</strong> {r.listingName}</p>
-                  <p><strong>Check-in:</strong> {format(r.startDate,'d/MM/yyyy',{locale: ptBR})}</p>
-                  <p><strong>Check-out:</strong> {format(r.endDate,`d/MM/yyyy`,{locale: ptBR})}</p>
-                  <p><strong>Preço total:</strong> { r.totalPrice }</p>
-                </li>
+                <BookingCard key={r.id} booking={r} />
               ))}
             </ul>
           ) : (
@@ -98,11 +113,7 @@ export default function AccountPage() {
           {listings.length > 0 ? (
             <ul className="space-y-3">
               {listings.map((l) => (
-                <li key={l.id} className="border p-3 rounded-lg shadow-sm">
-                  <p><strong>Título:</strong> {l.title}</p>
-                  <p><strong>Localização:</strong> {l.location}</p>
-                  <p><strong>Preço por noite:</strong> R${l.pricePerNight}</p>
-                </li>
+                <MyListingCard key={l.id} listing={l}/>
               ))}
             </ul>
           ) : (

@@ -7,6 +7,6 @@ document.documentElement.classList.add('dark'); // Ativa modo dark fixo (tempor√
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+      <App />
   </StrictMode>,
 )

@@ -45,7 +45,7 @@ async function createBooking(req, res) {
     })
     res.json(booking)
   } catch (error) {
-    res.json({message: "Erro ao criar reserva"})
+    res.json({message: "Erro ao criar reserva", error: error})
   }
 }
 

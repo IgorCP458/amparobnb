@@ -7,11 +7,9 @@ import { CalendarIcon } from "lucide-react"
 import { addDays, differenceInDays, format, intervalToDuration } from "date-fns"
 import { useEffect, useState } from "react"
 import { type DateRange } from "react-day-picker"
-
-interface ReservationCardProps {
-  maxGuests: number,
-  pricePerNight: number
-}
+import { useListingContext } from "@/contexts/ListingContext"
+import api from "@/services/api"
+import { useAuth } from "@/services/AuthContext"
 
 interface GetDaysProps {
   from: Date,
@@ -26,11 +24,33 @@ function getDays (dateRange: GetDaysProps) {
   return result
 }
 
-export default function ReservationCard({maxGuests, pricePerNight}: ReservationCardProps) {
+export default function ReservationCard() {
   const [dateRange, setDateRange] = useState<DateRange>({
     from: addDays(new Date, 3),
     to: addDays(new Date, 5)
   })
+  const {user} = useAuth()
+
+  const {state} = useListingContext()
+
+  async function handleClick () {
+    const response = await api.post('/bookings/create', {
+      listingId: state.id,
+      userId: user?.id,
+      guestName: user?.name,
+      startDate: dateRange.from,
+      endDate: dateRange.to,
+      totalPrice: state.pricePerNight * (getDays(dateRange)),
+      listingName: state.title
+    })
+    if(response.status !== 200) {
+      console.log(response)
+    }
+    if(response.status === 200) {
+      console.log("Reserva feita com sucesso: ", response.data)
+    }
+  }
+
 
   return (
     <Card className="shadow-lg rounded-xl p-4 ml-4">
@@ -38,7 +58,7 @@ export default function ReservationCard({maxGuests, pricePerNight}: ReservationC
         {dateRange? dateRange.from !== undefined && dateRange?.to !== undefined?  
         
         <h2 className="text-lg font-semibold mb-4">
-          R$ {pricePerNight * (getDays(dateRange))} por {getDays(dateRange)} noites
+          R$ {state.pricePerNight * (getDays(dateRange))} por {getDays(dateRange)} noites
         </h2>
         : <h2 className="text-lg font-semibold mb-4">
         Adicione datas para ver os preços
@@ -104,7 +124,7 @@ export default function ReservationCard({maxGuests, pricePerNight}: ReservationC
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: maxGuests }, (_, i) => (
+              {Array.from({ length: state.maxGuests }, (_, i) => (
                 <SelectItem key={i + 1} value={String(i + 1)}>
                   {i + 1} {i + 1 === 1 ? "hóspede" : "hóspedes"}
                 </SelectItem>
@@ -114,10 +134,10 @@ export default function ReservationCard({maxGuests, pricePerNight}: ReservationC
         </div>
 
         {/* Botão */}
-        <Button className="w-full bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full text-base py-5">
+        <Button className="w-full bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full text-base py-5 cursor-pointer" onClick={handleClick}>
           Conferir disponibilidade
         </Button>
-        <span >Você ainda não será cobrado</span>
+        <span >Você ainda não será cobrado {user?.name}</span>
       </CardContent>
     </Card>
   )

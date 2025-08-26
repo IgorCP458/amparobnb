@@ -88,14 +88,17 @@ async function authCheck(req, res) {
     
     if(!token) {
       res.status(401).json({ user: null })
+      
+    } else {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const {id, email, name, avatar} = decoded; // salva info do user para a próxima rota
+        return res.status(200).json({user: {id, email, name, avatar}})
+      } catch (error) {
+        return res.status(401).json({ user: null });
+      }
     }
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const {id, email, name, avatar} = decoded; // salva info do user para a próxima rota
-      return res.status(200).json({user: {id, email, name, avatar}})
-    } catch (error) {
-      return res.status(401).json({ user: null });
-    }
+    
 }
 
 async function logout(req, res) {
